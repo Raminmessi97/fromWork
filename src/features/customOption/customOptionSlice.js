@@ -1,9 +1,13 @@
 import {  createSlice } from '@reduxjs/toolkit';
 import {counterSlice} from "../counter/counterSlice";
+import {randomNumberInRange} from "../../App";
+import { current } from '@reduxjs/toolkit'
+
 const initialState = {
     options:[],
     formValues:[]
 }
+
 
 export const customOptionSlice = createSlice({
     name:'customOptionSlice',
@@ -13,37 +17,50 @@ export const customOptionSlice = createSlice({
             state.options = action.payload;
         },
         onCheckBoxToggle:(state,action)=>{
-            console.log('actin',action.payload)
-            // let option = JSON.parse(JSON.stringify(state));
-            // if(e.target.checked){
-            //     setState([...state,opt])
-            //     // onChange(e,option);
-            // }else{
-            //     const indexOfObject = option.findIndex(object => {
-            //         return object.id === opt.id;
-            //     });
-            //     if(indexOfObject!==-1) {
-            //         option.splice(indexOfObject, 1)
-            //     }
-            //     setState(option)
-            //     // onChange(e,option);
-            // }
-            // state.formValues = action.payload;
             const {checked,opt} = action.payload;
-            let data = state.formValues;
+            console.log('opt',opt)
+            console.log('checkec',checked);
+            // let data = state.formValues;
+            // console.log('data',current(data));
             if(checked) {
-                data = [...data,opt]
+                state.formValues.push(opt);
             }
             else{
-                const indexOfObject = opt.findIndex(object => {
+                let options = JSON.parse(JSON.stringify(current(state.formValues)));
+                const indexOfObject = options.findIndex(object => {
                     return object.id === opt.id;
                 });
                 if(indexOfObject!==-1) {
-                    opt.splice(indexOfObject, 1)
+                    options.splice(indexOfObject, 1)
                 }
-                data = opt;
+                state.formValues = options;
             }
-            state.formValues = data
+
+        },
+        onChangeEvents:(state,action)=>{
+            const {parentId,name} = action.payload;
+            const data = {
+                id:randomNumberInRange(),
+                parentId,
+                name
+            }
+            let options = JSON.parse(JSON.stringify(current(state.formValues)));
+            console.log('options',options);
+            console.log('ddd',parentId)
+            let indexOfObject = options.findIndex(object=>{
+                return object.parentId === parentId
+            })
+            options[indexOfObject] = data;
+            // let findElement = options.find(el=>el.parentId===parentId);
+            // if(!findElement){
+            //     state.formValues.push(data);
+            // }
+            // else{
+            //     console.log('findElement',findElement);
+            // }
+            // console.log('findElement',findElement);
+
+            // state.formValues = state1;
         }
     }
 })
@@ -52,5 +69,5 @@ export const selectOptions = (state) => state.customOption.options;
 export const selectFormOptions = (state) => state.customOption.formValues;
 
 
-export const {setOption,onCheckBoxToggle} = customOptionSlice.actions;
+export const {setOption,onCheckBoxToggle,onChangeEvents} = customOptionSlice.actions;
 export default customOptionSlice.reducer;

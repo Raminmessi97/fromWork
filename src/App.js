@@ -8,6 +8,26 @@ import {useDispatch} from "react-redux";
 import {setOption} from "./features/customOption/customOptionSlice"
 import {NavLink} from "react-router-dom";
 
+
+export const services = [
+  {
+    id:1,
+    name:"transport",
+  },
+  {
+    id:2,
+    name:"restoran",
+  },
+  {
+    id:3,
+    name:"xonca",
+  },
+  {
+    id:4,
+    name:"clothes",
+  },
+]
+
 export const customOptions = [
   {
     name:'Input',
@@ -42,6 +62,7 @@ export function randomNumberInRange(min=10,max=1000) {
 
 
 function App() {
+  const [service,setService] = React.useState("transport")
   const [mainType,setMainType] = React.useState('Input');
   const [options,setOptions] = React.useState([]);
   const [optionvalue,setOptionsValues] = useState([]);
@@ -51,7 +72,8 @@ function App() {
     let opt = {
       id:randomNumberInRange(),
       name:'',
-      type:mainType
+      type:mainType,
+      service:service
     }
     let multi = customOptions.find(op=>op.name===mainType);
     if(multi.multi){
@@ -105,6 +127,11 @@ function App() {
 
   }
 
+  const changeService = (e)=>{
+    setService(e.target.value)
+  }
+
+
   const changeMainType = (e)=>{
     setMainType(e.target.value)
   }
@@ -146,6 +173,11 @@ function App() {
               <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
               <div className="row">
                 <div className="col-lg-3">
+                  <select className="form-select form-select-sm" aria-label=".form-select-sm example" defaultValue="1" onChange={changeService}>
+                    {services.map((service)=>(
+                        <option key={service.id} value={service.name}>{service.name}</option>
+                    ))}
+                  </select>
                 <select className="form-select form-select-sm" aria-label=".form-select-sm example" defaultValue="1" onChange={changeMainType}>
                   {customOptions.map((option)=>(
                   <option key={option.id} value={option.name}>{option.name}</option>

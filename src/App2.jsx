@@ -1,7 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {NavLink} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {selectOptions,selectFormOptions,onCheckBoxToggle} from "./features/customOption/customOptionSlice";
+import {
+    selectOptions,
+    selectFormOptions,
+    onCheckBoxToggle,
+    onChangeEvents
+} from "./features/customOption/customOptionSlice";
 import {randomNumberInRange} from "./App";
 
 
@@ -62,33 +67,10 @@ const formItems = {
 export const App2 = ()=>{
     const [allOptions,setAllOptions] = useState([])
     const options = useSelector(selectOptions)
-    console.log(options,'options')
+    const dispatch = useDispatch();
 
-    const onChangeOptions = (e,option,state)=>{
-        // console.log('option',option);
-        // console.log('state',state);
-        // if(!e && option.type!=="Checkbox") return;
-        const data = {
-            id:randomNumberInRange(),
-            mainId:option.id,
-            type:option.type,
-            // value:e.target.value
-        }
-
-        if(option.type === "Checkbox"){
-            data.value = state;
-        }
-        else{
-            data.value = e.target.value
-        }
-
-
-
-
-
-
-        setAllOptions({...allOptions,[option.id]:data})
-
+    const onChangeOptions = (e,option)=>{
+        dispatch(onChangeEvents({parentId:option.id,name:e.target.value}));
     }
     useEffect(()=>{
         console.log('allOptions',allOptions)
@@ -111,7 +93,7 @@ export const App2 = ()=>{
             <form>
                 {options.map((option,key)=>{
                     const Component = formItems[option.type]
-                   return <Component onChange={(e,state)=>onChangeOptions(e,option,state)}
+                   return <Component key={key} onChange={(e,state)=>onChangeOptions(e,option,state)}
                                      className="custom-select mr-sm-2" {...option} placeholder={option.name}  />
                 })}
 
