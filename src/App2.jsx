@@ -5,20 +5,31 @@ import {
     selectOptions,
     selectFormOptions,
     onCheckBoxToggle,
-    onChangeEvents
+    onChangeEvents,
+    serviceNameRedux,
+    setOption
 } from "./features/customOption/customOptionSlice";
 import {randomNumberInRange} from "./App";
+import { useAddServiceMutation } from "./features/services/servicesApi";
+
 
 
 const formItems = {
-    Input({multi,...rest}){
-        return <input type="text" {...rest} />
+    Input({multi,name,id,...rest}){
+        return (
+                <div className="form-group row">
+                   <label htmlFor={id} className="col-sm-2 col-form-label">{name}</label>
+                   <div className="col-sm-10">
+                   <input type="text" {...rest} />
+                   </div>
+                </div>
+            )
     },
     Select({options,multi,...rest}){
         return (
             <select {...rest}>
                 {options.map(opt=>
-                    (<option key={opt.id} value={opt.id}>{opt.name}</option>)
+                    (<option key={opt.id} value={opt.name}>{opt.name}</option>)
                 )}
             </select>
         )
@@ -69,33 +80,57 @@ export const App2 = ()=>{
     const options = useSelector(selectOptions)
     const dispatch = useDispatch();
 
+    const [addService,result] = useAddServiceMutation()
+
     const onChangeOptions = (e,option)=>{
         dispatch(onChangeEvents({parentId:option.id,name:e.target.value}));
     }
-    useEffect(()=>{
-        console.log('allOptions',allOptions)
-    },[allOptions])
+    // useEffect(()=>{
+    //     console.log('allOptions',allOptions)
+    // },[allOptions])
 
 
     const data2 = useSelector(selectFormOptions);
+    const serviceName = useSelector(serviceNameRedux)
 
-    const submit2 =(e)=>{
-        e.preventDefault();
+
+    const submit2 = async () => {
+        let data = {
+            service:serviceName,
+            options:data2
+        }
         console.log('data2',data2);
-    }
+        try{
+            const res = await addService(data);
+            console.log('res',res);
+            dispatch(setOption([]));
+        }
+        catch(e){
+            console.log('e',e)
+        }
+      
+      }
 
     return(
         <>
             <NavLink to='/home'>Home</NavLink>
+            <NavLink to='/partner'>Partner</NavLink>
             <NavLink to='/user'>User</NavLink>
 
 
+
             <form>
+                <div className="row">
                 {options.map((option,key)=>{
                     const Component = formItems[option.type]
-                   return <Component key={key} onChange={(e,state)=>onChangeOptions(e,option,state)}
-                                     className="custom-select mr-sm-2" {...option} placeholder={option.name}  />
+                   return (
+                    <div className="col-lg-12">
+                        <Component key={key} onChange={(e,state)=>onChangeOptions(e,option,state)}
+                                        className="custom-select mr-sm-2" {...option} placeholder={option.name}  />
+                    </div>
+                   )
                 })}
+                </div>
 
                 <button type="button" onClick={submit2}>SSS</button>
                 {/*<div className="form-group row">*/}

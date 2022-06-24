@@ -5,7 +5,7 @@ import './App.css';
 import { faAdd,faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {useDispatch} from "react-redux";
-import {setOption} from "./features/customOption/customOptionSlice"
+import {setOption, setService2} from "./features/customOption/customOptionSlice"
 import {NavLink} from "react-router-dom";
 
 
@@ -129,11 +129,13 @@ function App() {
 
   const changeService = (e)=>{
     setService(e.target.value)
+    dispatch(setService2(e.target.value));
   }
 
 
   const changeMainType = (e)=>{
     setMainType(e.target.value)
+  
   }
 
   const removeOptionValue = (mainId,id)=>{
@@ -165,8 +167,9 @@ function App() {
 
   return (
         <>
-          <NavLink to='/home'>Home</NavLink>
-          <NavLink to='/user'>User</NavLink>
+         <NavLink to='/home'>Home</NavLink>
+            <NavLink to='/partner'>Partner</NavLink>
+            <NavLink to='/user'>User</NavLink>
           <div className="card">
             <div className="card-body">
               <h5 className="card-title">Special title treatment</h5>

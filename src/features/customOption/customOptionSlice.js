@@ -5,7 +5,8 @@ import { current } from '@reduxjs/toolkit'
 
 const initialState = {
     options:[],
-    formValues:[]
+    formValues:[],
+    service:'transport'
 }
 
 
@@ -15,6 +16,9 @@ export const customOptionSlice = createSlice({
     reducers:{
         setOption:(state,action)=>{
             state.options = action.payload;
+        },
+        setService2:(state,action)=>{
+            state.service = action.payload;
         },
         onCheckBoxToggle:(state,action)=>{
             const {checked,opt} = action.payload;
@@ -45,12 +49,19 @@ export const customOptionSlice = createSlice({
                 name
             }
             let options = JSON.parse(JSON.stringify(current(state.formValues)));
-            console.log('options',options);
-            console.log('ddd',parentId)
             let indexOfObject = options.findIndex(object=>{
                 return object.parentId === parentId
             })
-            options[indexOfObject] = data;
+
+            if(indexOfObject === -1) {
+                options.push(data);
+            }
+            else {
+                console.log('indexOfObject',indexOfObject)
+                options[indexOfObject] = data;
+            }
+            console.log('ddd',options)
+            state.formValues = options;
             // let findElement = options.find(el=>el.parentId===parentId);
             // if(!findElement){
             //     state.formValues.push(data);
@@ -67,7 +78,8 @@ export const customOptionSlice = createSlice({
 
 export const selectOptions = (state) => state.customOption.options;
 export const selectFormOptions = (state) => state.customOption.formValues;
+export const serviceNameRedux = (state)=>state.customOption.service
 
 
-export const {setOption,onCheckBoxToggle,onChangeEvents} = customOptionSlice.actions;
+export const {setOption,setService2,onCheckBoxToggle,onChangeEvents} = customOptionSlice.actions;
 export default customOptionSlice.reducer;
